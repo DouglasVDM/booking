@@ -21,6 +21,12 @@
   </head>
   <body>
     <h1>Login</h1>
+    
+    <ul>
+      <% if(messages.success.msg) { %>
+        <li><% messages.success_msg %></li>
+      <% } %>
+    </ul>
 
     <form action="/users/login" method="post">
       <div>
@@ -44,9 +50,7 @@
       <div>
         <input type="submit" value="Login" />
       </div>
-      <a href="/users/register">
-        Register
-      </a>
+      <a href="/users/register"> Register </a>
     </form>
   </body>
 </html>
