@@ -3,7 +3,11 @@ const { pool } = require('./dbConfig');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
+const passport = require('passport');
 
+const initializePassport = require('./passportConfig');
+
+initializePassport(passport);
 require('dotenv').config();
 
 const app = express();
@@ -18,6 +22,8 @@ app.use(
     saveUninitialized: false
   })
 );
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(flash());
 
 app.get('/', (req, res) => {
@@ -33,7 +39,13 @@ app.get('/users/login', (req, res) => {
 });
 
 app.get('/users/dashboard', (req, res) => {
-  res.render('dashboard', { user: 'Douglas' });
+  res.render('dashboard', { user: req.user.name });
+});
+
+app.get('/users/logout', (req, res) => {
+  req.logOut();
+  req.flash('success_msg', 'You have logged out');
+  res.redirect('/users/login');
 });
 
 app.post('/users/register', async (req, res) => {
@@ -95,6 +107,15 @@ app.post('/users/register', async (req, res) => {
     )
   }
 });
+
+app.post(
+  '/users/login',
+  passport.authenticate('local', {
+    successRedirect: '/users/dashboard',
+    failRedirect: '/users/login',
+    failureFlash: true
+  })
+);
 
 app.listen(PORT, (req, res) => {
   console.log(`Server is listening on port: ${PORT}. Ready to accept requests!`);
