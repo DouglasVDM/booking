@@ -28,6 +28,12 @@
       <% } %>
     </ul>
 
+    <ul>
+      <% if(messages.error) { %>
+      <li><%= message.error %></li>
+      <% } %>
+    </ul>
+
     <form action="/users/login" method="post">
       <div>
         <input
